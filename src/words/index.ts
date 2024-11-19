@@ -1,9 +1,6 @@
-// Define the structure of the words object with a type
 type Words = {
-  [key: string]: string[]; // Key is a language code, value is an array of words
+  [key: string]: string[];
 };
-
-// Declare the words object with strong typing
 const words: Words = {
   en: [
     "the",
