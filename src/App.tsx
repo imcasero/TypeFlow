@@ -1,10 +1,17 @@
+import { loadWords } from "./words";
+
 function App() {
+  const language = "en";
+  const words = loadWords(language);
+
   return (
-    <>
-      <h1 className="text-3xl font-bold underline text-red-500">
-        Hello world!
-      </h1>
-    </>
+    <div>
+      <ul>
+        {words.map((word, index) => (
+          <li key={index}>{word}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
