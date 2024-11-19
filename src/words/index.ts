@@ -44,7 +44,7 @@ const words: Words = {
   ],
 };
 
-export function loadWords(language: string): string[] {
+export function loadWords(language: string, length: number): string {
   if (!Object.prototype.hasOwnProperty.call(words, language)) {
     throw new Error(`Language "${language}" is not supported.`);
   }
@@ -60,5 +60,6 @@ export function loadWords(language: string): string[] {
     ];
   }
 
-  return shuffledWords.slice(0, 15);
+  const selectedSlice = shuffledWords.slice(0, length);
+  return selectedSlice.join(" ");
 }
