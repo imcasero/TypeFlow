@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { loadWords } from "./words";
 import { differenceInSeconds } from "date-fns";
+import { TypingPerformance } from "./lib/performance/TypingPerformance";
 
 const App = () => {
   const language = "en";
@@ -12,8 +13,11 @@ const App = () => {
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [errorCount, setErrorCount] = useState<number>(0);
   const [isFinished, setIsFinished] = useState<boolean>(false);
-  const [time, setTime] = useState<number>(0);
   const [startTime, setStartTime] = useState<Date>(new Date());
+  const [time, setTime] = useState<number>(0);
+
+  const [wpm, setWpm] = useState<number>(0);
+  const [accuracy, setAccuracy] = useState<number>(0);
 
   useEffect(() => {
     setWords(loadWords(language, length));
@@ -51,6 +55,21 @@ const App = () => {
     }
   };
 
+  useEffect(() => {
+    if (isFinished) {
+      const typingPerformance = new TypingPerformance({
+        charactersTyped: words.length,
+        errors: errorCount,
+        timeInMinutes: time / 60,
+        totalWords: correctCount,
+        correctWords: correctCount - errorCount,
+      });
+
+      setWpm(typingPerformance.calculateFinalWPM());
+      setAccuracy(typingPerformance.calculateAccuracy());
+    }
+  }, [isFinished, correctCount, errorCount, time, words]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <h1 className="text-4xl font-semibold mb-4">Typing Practice</h1>
@@ -77,6 +96,13 @@ const App = () => {
         <p>
           <strong>Errors:</strong> {errorCount}
         </p>
+        <p>
+          <strong>WPM:</strong> {isFinished ? wpm.toFixed(2) : "-"}
+        </p>
+        <p>
+          <strong>Accuracy:</strong>{" "}
+          {isFinished ? accuracy.toFixed(2) + "%" : "-"}
+        </p>
       </div>
       {isFinished && (
         <div className="mt-4 p-4 bg-green-200 text-green-800 rounded-lg">
@@ -84,7 +110,9 @@ const App = () => {
           <p>Tu puntuación final:</p>
           <p>Correctos: {correctCount}</p>
           <p>Errores: {errorCount}</p>
-          <p>Tiempo: {time}</p>
+          <p>Tiempo: {time} segundos</p>
+          <p>WPM Final: {wpm.toFixed(0)}</p>
+          <p>Precisión: {accuracy}%</p>
         </div>
       )}
     </div>
