@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { loadWords } from "./words";
 
-function App() {
+const App = () => {
   const language = "en";
   const length = 15;
 
@@ -80,6 +80,6 @@ function App() {
       )}
     </div>
   );
-}
+};
 
 export default App;
