@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { loadWords } from "./words";
+import { loadWords } from "./lib/words";
 import { differenceInSeconds } from "date-fns";
 import { TypingPerformance } from "./lib/performance/TypingPerformance";
 
@@ -22,6 +22,21 @@ const App = () => {
   useEffect(() => {
     setWords(loadWords(language, length));
   }, [language, length]);
+
+  useEffect(() => {
+    if (isFinished) {
+      const typingPerformance = new TypingPerformance({
+        charactersTyped: words.length,
+        errors: errorCount,
+        timeInMinutes: time / 60,
+        totalWords: correctCount,
+        correctWords: correctCount - errorCount,
+      });
+
+      setWpm(typingPerformance.calculateFinalWPM());
+      setAccuracy(typingPerformance.calculateAccuracy());
+    }
+  }, [isFinished, correctCount, errorCount, time, words]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -54,21 +69,6 @@ const App = () => {
       setIsFinished(true);
     }
   };
-
-  useEffect(() => {
-    if (isFinished) {
-      const typingPerformance = new TypingPerformance({
-        charactersTyped: words.length,
-        errors: errorCount,
-        timeInMinutes: time / 60,
-        totalWords: correctCount,
-        correctWords: correctCount - errorCount,
-      });
-
-      setWpm(typingPerformance.calculateFinalWPM());
-      setAccuracy(typingPerformance.calculateAccuracy());
-    }
-  }, [isFinished, correctCount, errorCount, time, words]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
