@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { loadWords } from "./words";
+import { differenceInSeconds } from "date-fns";
 
 const App = () => {
   const language = "en";
@@ -11,6 +12,8 @@ const App = () => {
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [errorCount, setErrorCount] = useState<number>(0);
   const [isFinished, setIsFinished] = useState<boolean>(false);
+  const [time, setTime] = useState<number>(0);
+  const [startTime, setStartTime] = useState<Date>(new Date());
 
   useEffect(() => {
     setWords(loadWords(language, length));
@@ -18,6 +21,10 @@ const App = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
+    if (value.length === 1) {
+      setStartTime(new Date());
+    }
 
     if (value.length < currentInput.length) {
       setCurrentInput(value);
@@ -39,6 +46,7 @@ const App = () => {
     setCurrentInput(value);
 
     if (currentIndex + 1 === words.length) {
+      setTime(differenceInSeconds(new Date(), startTime));
       setIsFinished(true);
     }
   };
@@ -76,6 +84,7 @@ const App = () => {
           <p>Tu puntuación final:</p>
           <p>Correctos: {correctCount}</p>
           <p>Errores: {errorCount}</p>
+          <p>Tiempo: {time}</p>
         </div>
       )}
     </div>
